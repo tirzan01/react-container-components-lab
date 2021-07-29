@@ -17,32 +17,37 @@ class SearchableMovieReviewsContainer extends Component {
             searchTerm: ''
         }
     }
+
+    handleChange = e => {
+        this.setState({
+            searchTerm: e.target.value
+        })
+    }
     
     fetchSearchByUserInput = () => {
         fetch(`${URL}&query=${this.state.searchTerm}`)
         .then(resp => resp.json())
         .then(json => {
-            const arrayOfSearchedMovie = []
-            for (let i = 0; i < json.results.length; i++) {
-                arrayOfSearchedMovie.push(json.results[i].link.url)
-            }
             this.setState({
-                reviews: arrayOfSearchedMovie
+                reviews: json.results ? json.results : [],
+                searchTerm: ''
             })
         })
+    }
+
+    handleSubmit = e => {
+        e.preventDefault()
+        this.fetchSearchByUserInput()
     }
     
     render() {
         
         return <div className='searchable-movie-reviews'>
-            <form onSubmit={e => {
-                e.preventDefault()
-                    this.fetchSearchByUserInput()
-                }}>
-                <input value={this.state.searchTerm} name='searchTerm' onChange={e => this.setState({[e.target.name]: e.target.value})} />
+            <form onSubmit={this.handleSubmit}>
+                <input value={this.state.searchTerm} name='searchTerm' onChange={this.handleChange} />
                 <input type='submit' />
             </form>
-            {this.state.reviews.map(review => <MovieReviews review={review}/>)}
+            <MovieReviews reviews={this.state.reviews} />
         </div>
     }
 }

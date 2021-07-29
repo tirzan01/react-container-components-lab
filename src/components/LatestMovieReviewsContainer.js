@@ -19,22 +19,18 @@ class LatestMovieReviewsContainer extends Component {
     }
 
     fetchLatestMoviesReviews = () => {
-        fetch(`${URL}`)
+        fetch(URL)
             .then(resp => resp.json())
             .then(json => {
-                const arrayOfMovies = []
-                for (let i = 0; i < json.results.length; i++) {
-                    arrayOfMovies.push(json.results[i].link.url)
-                }
-                this.setState(prevState => {
-                    return {reviews: arrayOfMovies}
+                this.setState({
+                    reviews: json.results ? json.results : []
                 })
             })
     }
 
     render() {
         return <div className='latest-movie-reviews'>
-            {this.state.reviews.map((review, i) => <MovieReviews key={i} review={review}/>)}
+            <MovieReviews reviews={this.state.reviews} />
         </div>
     }
 
